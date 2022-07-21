@@ -37,17 +37,22 @@ renderHead rp model = do
 renderBody :: Prism' FilePath Route -> Model -> H.Html
 renderBody rp model = do
   H.div ! A.class_ "container mx-auto mt-8 p-2" $ do
-    H.h1 ! A.class_ "text-3xl font-bold" $ "Emanima"
+    H.h1 ! A.class_ "text-3xl font-bold" $ "Emanima (WIP)"
     H.section ! A.class_ "py-4 px-4 my-2 bg-gray-200" $ do
-      let notes =
-            Ix.toList (Em._modelNotes $ modelNotes model) <&> \note ->
-              (Em.toPlain . Em._noteTitle &&& Em._noteMeta) $ note
-      H.h2 ! A.class_ "font-bold text-xl" $ "Notes we got"
+      let notes = Ix.toList (Em._modelNotes $ modelNotes model)
+      H.p "TODO: Show mood calendar"
+      H.h2 ! A.class_ "font-bold text-xl" $ "Available notes:"
       H.table ! A.class_ "table-auto" $ do
-        forM_ notes $ \(r, meta) -> do
+        H.thead $ do
+          H.tr ! A.class_ "text-left" $ do
+            H.th "Note"
+            H.th "Meta"
+        forM_ notes $ \note -> do
           H.tr $ do
-            H.td ! A.class_ "underline py-1 pr-2" $ H.toHtml r
-            H.td ! A.class_ "font-mono text-xs py-1" $ show meta
+            H.td ! A.class_ "py-1 pr-2" $ do
+              let r = HtmlRoute_Notes $ Em.SiteRoute_ResourceRoute $ Em.ResourceRoute_LML $ Em._noteRoute note
+              routeLink rp r $ H.toHtml $ Em.toPlain . Em._noteTitle $ note
+            H.td ! A.class_ "font-mono text-xs py-1" $ show $ Em._noteMeta note
     let notesIndexUrl = Ema.routeUrl rp $ Route_Html $ HtmlRoute_Notes $ Em.SiteRoute_VirtualRoute Em.VirtualRoute_Index
     H.a ! A.href (H.toValue notesIndexUrl) $
       H.button ! A.class_ "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" $
@@ -57,7 +62,7 @@ renderBody rp model = do
 routeLink :: Prism' FilePath Route -> HtmlRoute -> H.Html -> H.Html
 routeLink rp r =
   H.a ! A.href (H.toValue $ Ema.routeUrl rp $ Route_Html r)
-    ! A.class_ "text-rose-400"
+    ! A.class_ "text-blue-600 hover:text-blue-800"
 
 -- | Link to a file under ./static
 staticRouteUrl :: IsString r => Prism' FilePath Route -> Model -> FilePath -> r
