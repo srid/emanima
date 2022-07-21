@@ -90,18 +90,15 @@ renderBody :: Prism' FilePath Route -> Model -> H.Html
 renderBody rp model = do
   H.div ! A.class_ "container mx-auto mt-8 p-2" $ do
     H.h1 ! A.class_ "text-3xl font-bold" $ "Emanima"
-    H.section $ do
+    H.section ! A.class_ "py-4 px-4 my-2 bg-gray-200" $ do
       let notes = Ix.toList (Em._modelNotes $ modelNotes model)
-      H.h2 "Notes we got"
+      H.h2 ! A.class_ "font-bold text-xl" $ "Notes we got"
       forM_ notes $ \note -> do
         H.li $ H.span ! A.class_ "font-mono text-xs" $ show note
-    case preview rp "notes/index.html" of
-      Nothing -> "No index.md?"
-      Just notesIndex -> do
-        let notesIndexUrl = Ema.routeUrl rp notesIndex
-        H.a ! A.href (H.toValue notesIndexUrl) $
-          H.button ! A.class_ "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" $
-            "Notes"
+    let notesIndexUrl = Ema.routeUrl rp $ Route_Html $ HtmlRoute_Notes $ Em.SiteRoute_VirtualRoute Em.VirtualRoute_Index
+    H.a ! A.href (H.toValue notesIndexUrl) $
+      H.button ! A.class_ "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" $
+        "Go to Emanote index"
     H.img ! A.src (staticRouteUrl rp model "logo.svg") ! A.class_ "py-4 w-32" ! A.alt "Ema Logo"
 
 routeLink :: Prism' FilePath Route -> HtmlRoute -> H.Html -> H.Html
