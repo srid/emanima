@@ -785,8 +785,16 @@ select {
   margin-top: 2rem;
 }
 
+.table {
+  display: table;
+}
+
 .w-32 {
   width: 8rem;
+}
+
+.table-auto {
+  table-layout: auto;
 }
 
 .rounded {
@@ -822,6 +830,15 @@ select {
   padding-bottom: 0.5rem;
 }
 
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
 .font-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
@@ -845,6 +862,10 @@ select {
   font-weight: 700;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
@@ -853,6 +874,11 @@ select {
 .text-rose-400 {
   --tw-text-opacity: 1;
   color: rgb(251 113 133 / var(--tw-text-opacity));
+}
+
+.underline {
+  -webkit-text-decoration-line: underline;
+          text-decoration-line: underline;
 }
 
 .hover\:bg-blue-700:hover {
