@@ -8,7 +8,11 @@ import Data.Generics.Sum.Any (AsAny (_As))
 import Ema
 import Ema.Route.Generic.TH
 import Ema.Route.Lib.Extra.StaticRoute qualified as SR
-import Emanote
+import Emanote ()
+import Emanote qualified as Em
+import Emanote.CLI qualified as Em
+import Emanote.Model.Type qualified as Em
+import Emanote.Route.SiteRoute.Type qualified as Em
 import Optics.Core (Prism', (%))
 import Text.Blaze.Html.Renderer.Utf8 qualified as RU
 import Text.Blaze.Html5 ((!))
@@ -17,16 +21,18 @@ import Text.Blaze.Html5.Attributes qualified as A
 
 data Model = Model
   { modelStatic :: SR.Model
+  , modelNotes :: Em.ModelEma
   }
-  deriving stock (Eq, Show, Generic)
+  deriving stock (Generic)
 
 data HtmlRoute
   = HtmlRoute_Index
+  | HtmlRoute_Notes Em.SiteRoute
   | HtmlRoute_About
-  deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
+  deriving stock (Show, Eq, Ord, Generic)
 
 deriveGeneric ''HtmlRoute
-deriveIsRoute ''HtmlRoute [t|'[]|]
+deriveIsRoute ''HtmlRoute [t|'[WithModel Em.ModelEma]|]
 
 type StaticRoute = SR.StaticRoute "static"
 
@@ -47,9 +53,11 @@ deriveIsRoute
     |]
 
 instance EmaSite Route where
-  siteInput cliAct () = do
+  type SiteArg Route = SiteArg Em.SiteRoute
+  siteInput cliAct emanoteConfig = do
     staticRouteDyn <- siteInput @StaticRoute cliAct ()
-    pure $ Model <$> staticRouteDyn
+    notesDyn <- siteInput @Em.SiteRoute cliAct emanoteConfig
+    pure $ Model <$> staticRouteDyn <*> notesDyn
   siteOutput rp m = \case
     Route_Html r ->
       Ema.AssetGenerated Ema.Html $ renderHtmlRoute rp m r
@@ -91,7 +99,7 @@ renderBody rp model r = do
 renderNavbar :: Prism' FilePath Route -> HtmlRoute -> H.Html
 renderNavbar rp currentRoute =
   H.nav ! A.class_ "w-full text-xl font-bold flex space-x-4  mb-4" $ do
-    forM_ (universe @HtmlRoute) $ \r ->
+    forM_ [HtmlRoute_Index, HtmlRoute_About] $ \r ->
       let extraClass = if r == currentRoute then "bg-rose-400 text-white" else "text-gray-700"
        in H.a ! A.href (H.toValue $ routeUrl rp $ Route_Html r)
             ! A.class_ ("rounded p-2 " <> extraClass)
@@ -113,4 +121,6 @@ staticRouteUrl rp m =
   SR.staticRouteUrl (rp % (_As @"Route_Static")) (modelStatic m)
 
 main :: IO ()
-main = Ema.runSite_ @Route ()
+main = do
+  cli <- Em.parseCli
+  Ema.runSite_ @Route $ Em.defaultEmanoteConfig cli
