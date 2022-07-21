@@ -1,1 +1,1 @@
---warnings -T Main.main --setup ":set args run --port=7001" 
+--warnings -T Main.main --setup ":set args -L ./example run --port=7001" 

@@ -13,7 +13,7 @@ import Emanote qualified as Em
 import Emanote.CLI qualified as Em
 import Emanote.Model.Type qualified as Em
 import Emanote.Route.SiteRoute.Type qualified as Em
-import Optics.Core (Prism', (%))
+import Optics.Core (Prism', preview, (%))
 import Text.Blaze.Html.Renderer.Utf8 qualified as RU
 import Text.Blaze.Html5 ((!))
 import Text.Blaze.Html5 qualified as H
@@ -28,7 +28,6 @@ data Model = Model
 data HtmlRoute
   = HtmlRoute_Index
   | HtmlRoute_Notes Em.SiteRoute
-  | HtmlRoute_About
   deriving stock (Show, Eq, Ord, Generic)
 
 deriveGeneric ''HtmlRoute
@@ -59,56 +58,45 @@ instance EmaSite Route where
     notesDyn <- siteInput @Em.SiteRoute cliAct emanoteConfig
     pure $ Model <$> staticRouteDyn <*> notesDyn
   siteOutput rp m = \case
-    Route_Html r ->
-      Ema.AssetGenerated Ema.Html $ renderHtmlRoute rp m r
+    Route_Html hr ->
+      case hr of
+        HtmlRoute_Index ->
+          Ema.AssetGenerated Ema.Html $ renderHtmlRoute rp m
+        HtmlRoute_Notes r ->
+          siteOutput (rp % (_As @"Route_Html") % (_As @"HtmlRoute_Notes")) (modelNotes m) r
     Route_Static r ->
       siteOutput (rp % (_As @"Route_Static")) (modelStatic m) r
 
-renderHtmlRoute :: Prism' FilePath Route -> Model -> HtmlRoute -> LByteString
-renderHtmlRoute rp m r = do
+renderHtmlRoute :: Prism' FilePath Route -> Model -> LByteString
+renderHtmlRoute rp m = do
   RU.renderHtml $ do
     H.docType
     H.html ! A.lang "en" $ do
       H.head $ do
-        renderHead rp m r
+        renderHead rp m
       H.body $ do
-        renderBody rp m r
+        renderBody rp m
 
-renderHead :: Prism' FilePath Route -> Model -> HtmlRoute -> H.Html
-renderHead rp model r = do
+renderHead :: Prism' FilePath Route -> Model -> H.Html
+renderHead rp model = do
   H.meta ! A.charset "UTF-8"
   H.meta ! A.name "viewport" ! A.content "width=device-width, initial-scale=1"
-  H.title $ H.toHtml $ routeTitle r <> " - Emanima"
+  H.title $ "Emanima"
   H.base ! A.href "/"
   H.link ! A.rel "stylesheet" ! A.href (staticRouteUrl rp model "tailwind.css")
 
-renderBody :: Prism' FilePath Route -> Model -> HtmlRoute -> H.Html
-renderBody rp model r = do
+renderBody :: Prism' FilePath Route -> Model -> H.Html
+renderBody rp model = do
   H.div ! A.class_ "container mx-auto mt-8 p-2" $ do
-    renderNavbar rp r
-    H.h1 ! A.class_ "text-3xl font-bold" $ H.toHtml $ routeTitle r
-    case r of
-      HtmlRoute_Index -> do
-        "You are on the index page. Want to see "
-        routeLink rp HtmlRoute_About "About"
-        "?"
-      HtmlRoute_About -> do
-        "You are on the about page."
+    H.h1 ! A.class_ "text-3xl font-bold" $ "Emanima"
+    case preview rp "notes/" of
+      Nothing -> "No index.md?"
+      Just notesIndex -> do
+        let notesIndexUrl = Ema.routeUrl rp notesIndex
+        H.a ! A.href (H.toValue notesIndexUrl) $
+          H.button ! A.class_ "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" $
+            "Notes"
     H.img ! A.src (staticRouteUrl rp model "logo.svg") ! A.class_ "py-4 w-32" ! A.alt "Ema Logo"
-
-renderNavbar :: Prism' FilePath Route -> HtmlRoute -> H.Html
-renderNavbar rp currentRoute =
-  H.nav ! A.class_ "w-full text-xl font-bold flex space-x-4  mb-4" $ do
-    forM_ [HtmlRoute_Index, HtmlRoute_About] $ \r ->
-      let extraClass = if r == currentRoute then "bg-rose-400 text-white" else "text-gray-700"
-       in H.a ! A.href (H.toValue $ routeUrl rp $ Route_Html r)
-            ! A.class_ ("rounded p-2 " <> extraClass)
-            $ H.toHtml $ routeTitle r
-
-routeTitle :: HtmlRoute -> Text
-routeTitle r = case r of
-  HtmlRoute_Index -> "Home"
-  HtmlRoute_About -> "About"
 
 routeLink :: Prism' FilePath Route -> HtmlRoute -> H.Html -> H.Html
 routeLink rp r =
