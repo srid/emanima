@@ -43,7 +43,7 @@
           };
           source-overrides = {
             inherit (inputs)
-              ema emanote;
+              ema;
           };
           overrides = self: super: with pkgs.haskell.lib; {
             inherit (inputs'.tailwind-haskell.packages)
@@ -61,6 +61,7 @@
             ixset-typed = unmarkBroken super.ixset-typed;
             pandoc-link-context = unmarkBroken super.pandoc-link-context;
             generic-data = dontCheck super.generic-data; # Needed on GHC 9.2
+            emanote = self.callCabal2nix "emanote" inputs.emanote { };
 
           };
         };
