@@ -122,5 +122,5 @@ staticRouteUrl rp m =
 
 main :: IO ()
 main = do
-  cli <- Em.parseCli
-  Ema.runSite_ @Route $ Em.defaultEmanoteConfig cli
+  (emCfg, cli) <- (Em.defaultEmanoteConfig &&& Em.emaCli) <$> Em.parseCli
+  void $ Ema.runSiteWithCli @Route cli emCfg
