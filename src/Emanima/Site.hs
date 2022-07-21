@@ -6,6 +6,7 @@
 module Emanima.Site where
 
 import Data.Generics.Sum.Any (AsAny (_As))
+import Data.Text qualified as T
 import Ema
 import Emanima.Model (Model (Model, modelNotes, modelStatic))
 import Emanima.Route
@@ -26,7 +27,10 @@ instance EmaSite Route where
     Route_Html HtmlRoute_Index ->
       Ema.AssetGenerated Ema.Html $ View.renderDashboard rp m
     Route_Html (HtmlRoute_Notes r) ->
-      siteOutput (rp % (_As @"Route_Html") % (_As @"HtmlRoute_Notes")) (modelNotes m) r
+      let emanoteHtml = siteOutput (rp % (_As @"Route_Html") % (_As @"HtmlRoute_Notes")) (modelNotes m) r
+          -- HACK: until we fix https://github.com/EmaApps/emanima/issues/3
+          fixBug3 = fmap (encodeUtf8 . T.replace "<link href=\"tailwind.css?" "<link href=\"notes/tailwind.css?" . decodeUtf8)
+       in fixBug3 emanoteHtml
     Route_Static r ->
       siteOutput (rp % (_As @"Route_Static")) (modelStatic m) r
 
