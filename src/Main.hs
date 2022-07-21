@@ -14,7 +14,7 @@ import Emanote qualified as Em
 import Emanote.CLI qualified as Em
 import Emanote.Model.Type qualified as Em
 import Emanote.Route.SiteRoute.Type qualified as Em
-import Optics.Core (Prism', preview, (%))
+import Optics.Core (Prism', (%))
 import Text.Blaze.Html.Renderer.Utf8 qualified as RU
 import Text.Blaze.Html5 ((!))
 import Text.Blaze.Html5 qualified as H
