@@ -5,6 +5,7 @@
 module Main where
 
 import Data.Generics.Sum.Any (AsAny (_As))
+import Data.IxSet.Typed qualified as Ix
 import Ema
 import Ema.Route.Generic.TH
 import Ema.Route.Lib.Extra.StaticRoute qualified as SR
@@ -89,7 +90,12 @@ renderBody :: Prism' FilePath Route -> Model -> H.Html
 renderBody rp model = do
   H.div ! A.class_ "container mx-auto mt-8 p-2" $ do
     H.h1 ! A.class_ "text-3xl font-bold" $ "Emanima"
-    case preview rp "notes/" of
+    H.section $ do
+      let notes = Ix.toList (Em._modelNotes $ modelNotes model)
+      H.h2 "Notes we got"
+      forM_ notes $ \note -> do
+        H.li $ H.span ! A.class_ "font-mono text-xs" $ show note
+    case preview rp "notes/index.html" of
       Nothing -> "No index.md?"
       Just notesIndex -> do
         let notesIndexUrl = Ema.routeUrl rp notesIndex
