@@ -1,5 +1,3 @@
-{-# LANGUAGE DeriveAnyClass #-}
-
 module Emanima.Model where
 
 import Ema.Route.Lib.Extra.StaticRoute qualified as SR

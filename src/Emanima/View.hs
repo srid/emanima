@@ -1,12 +1,10 @@
-{-# LANGUAGE DeriveAnyClass #-}
-
 module Emanima.View where
 
 import Data.Generics.Sum.Any (AsAny (_As))
 import Data.IxSet.Typed qualified as Ix
-import Ema
+import Ema qualified
 import Ema.Route.Lib.Extra.StaticRoute qualified as SR
-import Emanima.Model
+import Emanima.Model (Model (modelNotes, modelStatic))
 import Emanima.Route
 import Emanote.Model.Type qualified as Em
 import Emanote.Route.SiteRoute.Type qualified as Em
@@ -51,7 +49,7 @@ renderBody rp model = do
 
 routeLink :: Prism' FilePath Route -> HtmlRoute -> H.Html -> H.Html
 routeLink rp r =
-  H.a ! A.href (H.toValue $ routeUrl rp $ Route_Html r)
+  H.a ! A.href (H.toValue $ Ema.routeUrl rp $ Route_Html r)
     ! A.class_ "text-rose-400"
 
 -- | Link to a file under ./static

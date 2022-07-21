@@ -7,7 +7,7 @@ module Emanima.Site where
 
 import Data.Generics.Sum.Any (AsAny (_As))
 import Ema
-import Emanima.Model
+import Emanima.Model (Model (Model, modelNotes, modelStatic))
 import Emanima.Route
 import Emanima.View qualified as View
 import Emanote ()
@@ -23,12 +23,10 @@ instance EmaSite Route where
     notesDyn <- siteInput @Em.SiteRoute cliAct emanoteConfig
     pure $ Model <$> staticRouteDyn <*> notesDyn
   siteOutput rp m = \case
-    Route_Html hr ->
-      case hr of
-        HtmlRoute_Index ->
-          Ema.AssetGenerated Ema.Html $ View.renderDashboard rp m
-        HtmlRoute_Notes r ->
-          siteOutput (rp % (_As @"Route_Html") % (_As @"HtmlRoute_Notes")) (modelNotes m) r
+    Route_Html HtmlRoute_Index ->
+      Ema.AssetGenerated Ema.Html $ View.renderDashboard rp m
+    Route_Html (HtmlRoute_Notes r) ->
+      siteOutput (rp % (_As @"Route_Html") % (_As @"HtmlRoute_Notes")) (modelNotes m) r
     Route_Static r ->
       siteOutput (rp % (_As @"Route_Static")) (modelStatic m) r
 
