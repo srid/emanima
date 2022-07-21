@@ -113,5 +113,6 @@ staticRouteUrl rp m =
 
 main :: IO ()
 main = do
+  -- TODO: Use cliParser to have control over CLI banner.
   (emCfg, cli) <- (Em.defaultEmanoteConfig &&& Em.emaCli) <$> Em.parseCli
   void $ Ema.runSiteWithCli @Route cli emCfg

@@ -22,6 +22,8 @@ jobs:
         run: |
           mkdir ./output
           export TARGET=$(pwd)/output
+          # Uncomment this for producing optimized CSS.
+          # nix develop -c tailwind-run -o static/tailwind.css 'src/**/*.hs' 
           ./result/bin/emanima -L ./example gen $TARGET
       - name: Deploy to gh-pages 🚀
         uses: peaceiris/actions-gh-pages@v3
