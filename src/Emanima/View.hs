@@ -6,6 +6,8 @@ import Ema qualified
 import Ema.Route.Lib.Extra.StaticRoute qualified as SR
 import Emanima.Model (Model (modelNotes, modelStatic))
 import Emanima.Route
+import Emanote.Model.Note qualified as Em
+import Emanote.Model.Title qualified as Em
 import Emanote.Model.Type qualified as Em
 import Emanote.Route.SiteRoute.Type qualified as Em
 import Optics.Core (Prism', (%))
@@ -37,10 +39,15 @@ renderBody rp model = do
   H.div ! A.class_ "container mx-auto mt-8 p-2" $ do
     H.h1 ! A.class_ "text-3xl font-bold" $ "Emanima"
     H.section ! A.class_ "py-4 px-4 my-2 bg-gray-200" $ do
-      let notes = Ix.toList (Em._modelNotes $ modelNotes model)
+      let notes =
+            Ix.toList (Em._modelNotes $ modelNotes model) <&> \note ->
+              (Em.toPlain . Em._noteTitle &&& Em._noteMeta) $ note
       H.h2 ! A.class_ "font-bold text-xl" $ "Notes we got"
-      forM_ notes $ \note -> do
-        H.li $ H.span ! A.class_ "font-mono text-xs" $ show note
+      H.table ! A.class_ "table-auto" $ do
+        forM_ notes $ \(r, meta) -> do
+          H.tr $ do
+            H.td ! A.class_ "underline py-1 pr-2" $ H.toHtml r
+            H.td ! A.class_ "font-mono text-xs py-1" $ show meta
     let notesIndexUrl = Ema.routeUrl rp $ Route_Html $ HtmlRoute_Notes $ Em.SiteRoute_VirtualRoute Em.VirtualRoute_Index
     H.a ! A.href (H.toValue notesIndexUrl) $
       H.button ! A.class_ "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" $
