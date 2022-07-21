@@ -17,23 +17,70 @@
         "type": "github"
       }
     },
-    "emanote": {
+    "ema_2": {
       "flake": false,
       "locked": {
-        "lastModified": 1658425967,
-        "narHash": "sha256-HO2be/zAzd9B8YL8Fh/ZXhxEVRtiZYBTgedfgizM/44=",
+        "lastModified": 1658331162,
+        "narHash": "sha256-13PYisWFUbrS+HOegqBMA1SRuG5fZNOVXccAlfOIylY=",
+        "owner": "srid",
+        "repo": "ema",
+        "rev": "67da7235a14e93e468112bb8d2217fb0e092304b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "ref": "multisite",
+        "repo": "ema",
+        "type": "github"
+      }
+    },
+    "emanote": {
+      "inputs": {
+        "ema": "ema_2",
+        "flake-parts": "flake-parts",
+        "haskell-flake": "haskell-flake",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "tailwind-haskell": "tailwind-haskell"
+      },
+      "locked": {
+        "lastModified": 1658426795,
+        "narHash": "sha256-BeXUbxBUZdp+DJCPBrKhzLhADxKRKd9gQTfFpSTh/1E=",
         "owner": "EmaApps",
         "repo": "emanote",
-        "rev": "b8d41cdb9739164f5bcba94d780465ad86ab246f",
+        "rev": "2a50755a6fc9869ed771ea53b317964cac48b3ad",
         "type": "github"
       },
       "original": {
         "owner": "EmaApps",
+        "ref": "ghc92",
         "repo": "emanote",
         "type": "github"
       }
     },
     "flake-parts": {
+      "inputs": {
+        "nixpkgs": [
+          "emanote",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1657102481,
+        "narHash": "sha256-62Fuw8JgPub38OdgNefkIKOodM9nC3M0AG6lS+7smf4=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "608ed3502263d6f4f886d75c48fc2b444a4ab8d8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-parts_2": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
@@ -69,7 +116,38 @@
         "type": "github"
       }
     },
+    "flake-utils_2": {
+      "locked": {
+        "lastModified": 1652776076,
+        "narHash": "sha256-gzTw/v1vj4dOVbpBSJX4J0DwUR6LIyXo7/SuuTJp1kM=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "04c1b180862888302ddfb2e3ad9eaa63afc60cf8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "ref": "v1.0.0",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "haskell-flake": {
+      "locked": {
+        "lastModified": 1654001497,
+        "narHash": "sha256-GfrpyoQrVT9Z/j9its8BQs3I5O5X5Lc2IkK922bz7zg=",
+        "owner": "srid",
+        "repo": "haskell-flake",
+        "rev": "4c0b0ff295f0b97238a600d2381c37ee46b67f9c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "haskell-flake",
+        "type": "github"
+      }
+    },
+    "haskell-flake_2": {
       "locked": {
         "lastModified": 1654001497,
         "narHash": "sha256-GfrpyoQrVT9Z/j9its8BQs3I5O5X5Lc2IkK922bz7zg=",
@@ -104,15 +182,38 @@
       "inputs": {
         "ema": "ema",
         "emanote": "emanote",
-        "flake-parts": "flake-parts",
-        "haskell-flake": "haskell-flake",
+        "flake-parts": "flake-parts_2",
+        "haskell-flake": "haskell-flake_2",
         "nixpkgs": "nixpkgs",
-        "tailwind-haskell": "tailwind-haskell"
+        "tailwind-haskell": "tailwind-haskell_2"
       }
     },
     "tailwind-haskell": {
       "inputs": {
         "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "emanote",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1657796772,
+        "narHash": "sha256-4JD3a9frE26VjaJysyd+DIHUJUiWsx/bFrk8tsGMSpU=",
+        "owner": "srid",
+        "repo": "tailwind-haskell",
+        "rev": "96f4c7f8c59eb1103b75ff7d4a753d2d4b9c1ee7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "ref": "master",
+        "repo": "tailwind-haskell",
+        "type": "github"
+      }
+    },
+    "tailwind-haskell_2": {
+      "inputs": {
+        "flake-utils": "flake-utils_2",
         "nixpkgs": [
           "nixpkgs"
         ]

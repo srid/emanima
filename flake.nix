@@ -9,8 +9,8 @@
     # Haskell overrides
     ema.url = "github:EmaApps/ema/multisite";
     ema.flake = false;
-    emanote.url = "github:EmaApps/emanote";
-    emanote.flake = false;
+    emanote.url = "github:EmaApps/emanote/ghc92";
+    emanote.inputs.nixpkgs.follows = "nixpkgs";
     tailwind-haskell.url = "github:srid/tailwind-haskell";
     tailwind-haskell.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -56,13 +56,8 @@
             streaming-commons = dontCheck super.streaming-commons; # Fails on darwin
             http2 = dontCheck super.http2; # Fails on darwin
 
-            # Emanote overrides below:
-            heist-emanote = dontCheck (doJailbreak (unmarkBroken super.heist-emanote));
-            ixset-typed = unmarkBroken super.ixset-typed;
-            pandoc-link-context = unmarkBroken super.pandoc-link-context;
-            generic-data = dontCheck super.generic-data; # Needed on GHC 9.2
-            emanote = self.callCabal2nix "emanote" inputs.emanote { };
-
+            # Emanote
+            emanote = inputs'.emanote.packages.ghc92;
           };
         };
       };
