@@ -1,8 +1,6 @@
-# Ema Template
+# Emanima
 
-A very simple example [Ema](https://ema.srid.ca/) site that is based on Blaze HTML & TailwindCSS 3. Use it to bootstrap your next static site using Ema.
-
-The generated HTML site can be previewed here: https://srid.github.io/emanima/
+WIP https://github.com/EmaApps/ideas/issues/6
 
 ## Getting Started
 

@@ -69,7 +69,7 @@ renderHead :: Prism' FilePath Route -> Model -> HtmlRoute -> H.Html
 renderHead rp model r = do
   H.meta ! A.charset "UTF-8"
   H.meta ! A.name "viewport" ! A.content "width=device-width, initial-scale=1"
-  H.title $ H.toHtml $ routeTitle r <> " - Ema Template"
+  H.title $ H.toHtml $ routeTitle r <> " - Emanima"
   H.base ! A.href "/"
   H.link ! A.rel "stylesheet" ! A.href (staticRouteUrl rp model "tailwind.css")
 
