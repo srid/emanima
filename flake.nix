@@ -7,8 +7,10 @@
     haskell-flake.url = "github:srid/haskell-flake";
 
     # Haskell overrides
-    ema.url = "github:srid/ema/multisite";
+    ema.url = "github:EmaApps/ema/multisite";
     ema.flake = false;
+    emanote.url = "github:EmaApps/emanote";
+    emanote.flake = false;
     tailwind-haskell.url = "github:srid/tailwind-haskell";
     tailwind-haskell.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -41,16 +43,25 @@
           };
           source-overrides = {
             inherit (inputs)
-              ema;
+              ema emanote;
           };
           overrides = self: super: with pkgs.haskell.lib; {
             inherit (inputs'.tailwind-haskell.packages)
               tailwind;
             type-errors-pretty = dontCheck (doJailbreak super.type-errors-pretty);
+
+            # GHC 9.2 overrides below:
             relude = dontCheck (self.callHackage "relude" "1.1.0.0" { }); # 1.1 not in nixpkgs yet 
             retry = dontCheck super.retry; # For GHC 9.2.
             streaming-commons = dontCheck super.streaming-commons; # Fails on darwin
             http2 = dontCheck super.http2; # Fails on darwin
+
+            # Emanote overrides below:
+            heist-emanote = dontCheck (doJailbreak (unmarkBroken super.heist-emanote));
+            ixset-typed = unmarkBroken super.ixset-typed;
+            pandoc-link-context = unmarkBroken super.pandoc-link-context;
+            generic-data = dontCheck super.generic-data; # Needed on GHC 9.2
+
           };
         };
       };

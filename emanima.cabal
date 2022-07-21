@@ -31,6 +31,7 @@ executable emanima
     , data-default
     , directory
     , ema                 >=0.7
+    , emanote
     , filepath
     , generic-optics
     , monad-logger
