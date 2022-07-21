@@ -37,6 +37,7 @@ executable emanima
     , monad-logger
     , optics-core
     , relude
+    , ixset-typed
     , text
     , time
     , unionmount          >=0.2
