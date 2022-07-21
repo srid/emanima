@@ -8,6 +8,7 @@ import Data.Generics.Sum.Any (AsAny (_As))
 import Ema
 import Ema.Route.Generic.TH
 import Ema.Route.Lib.Extra.StaticRoute qualified as SR
+import Emanote
 import Optics.Core (Prism', (%))
 import Text.Blaze.Html.Renderer.Utf8 qualified as RU
 import Text.Blaze.Html5 ((!))
