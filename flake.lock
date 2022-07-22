@@ -20,11 +20,11 @@
     "emanote": {
       "flake": false,
       "locked": {
-        "lastModified": 1658447442,
-        "narHash": "sha256-XUhpd0oRBNFW70jfHkT9+U9doX+0QCHAR0nKj80h/lc=",
+        "lastModified": 1658448473,
+        "narHash": "sha256-Hh8p90PuFAfa6Ovy7kEpEw/eoQSDDercb6VS79TNlaI=",
         "owner": "EmaApps",
         "repo": "emanote",
-        "rev": "962451ca3e21918767e850ea3fa61ceee7f87bee",
+        "rev": "b8542b2f2157e34aa172bdb8e67d4ed84d2a7e1d",
         "type": "github"
       },
       "original": {
