@@ -2,9 +2,11 @@ module Emanima.View where
 
 import Data.Generics.Sum.Any (AsAny (_As))
 import Data.IxSet.Typed qualified as Ix
+import Data.Map.Strict qualified as Map
 import Ema qualified
 import Ema.Route.Lib.Extra.StaticRoute qualified as SR
 import Emanima.Model (Model (modelNotes, modelStatic))
+import Emanima.Model qualified as M
 import Emanima.Route
 import Emanote.Model.Note qualified as Em
 import Emanote.Model.Title qualified as Em
@@ -39,20 +41,23 @@ renderBody rp model = do
   H.div ! A.class_ "container mx-auto mt-8 p-2" $ do
     H.h1 ! A.class_ "text-3xl font-bold" $ "Emanima (WIP)"
     H.section ! A.class_ "py-4 px-4 my-2 bg-gray-200" $ do
-      let notes = Ix.toList (Em._modelNotes $ modelNotes model)
-      H.p "TODO: Show mood calendar"
-      H.h2 ! A.class_ "font-bold text-xl" $ "Available notes:"
+      H.p "TODO: Show as calendar"
+      H.h2 ! A.class_ "font-bold text-xl" $ "Mood deltas:"
       H.table ! A.class_ "table-auto" $ do
         H.thead $ do
           H.tr ! A.class_ "text-left" $ do
-            H.th "Note"
-            H.th "Meta"
-        forM_ notes $ \note -> do
+            H.th "Day"
+            H.th "Delta"
+        forM_ (Map.toList $ M.modelMoodDeltas model) $ \(day, (lmlRoute, delta)) -> do
           H.tr $ do
             H.td ! A.class_ "py-1 pr-2" $ do
-              let r = HtmlRoute_Notes $ Em.SiteRoute_ResourceRoute $ Em.ResourceRoute_LML $ Em._noteRoute note
-              routeLink rp r $ H.toHtml $ Em.toPlain . Em._noteTitle $ note
-            H.td ! A.class_ "font-mono text-xs py-1" $ show $ Em._noteMeta note
+              let r = HtmlRoute_Notes $ Em.SiteRoute_ResourceRoute $ Em.ResourceRoute_LML lmlRoute
+              routeLink rp r $ show day
+            H.td ! A.class_ "font-mono text-xs py-1" $ do
+              case delta of
+                M.Same -> H.span ! A.class_ "text-3xl" $ "-"
+                M.Up -> H.span ! A.class_ "text-green-800 font-bold text-3xl" $ "/"
+                M.Down -> H.span ! A.class_ "text-red-800 font-bold text-3xl" $ "\\"
     let notesIndexUrl = Ema.routeUrl rp $ Route_Html $ HtmlRoute_Notes $ Em.SiteRoute_VirtualRoute Em.VirtualRoute_Index
     H.a ! A.href (H.toValue notesIndexUrl) $
       H.button ! A.class_ "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" $

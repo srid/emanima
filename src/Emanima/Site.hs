@@ -6,14 +6,17 @@
 module Emanima.Site where
 
 import Data.Generics.Sum.Any (AsAny (_As))
+import Data.IxSet.Typed qualified as Ix
 import Data.Text qualified as T
 import Ema
 import Emanima.Model (Model (Model, modelNotes, modelStatic))
+import Emanima.Model qualified as M
 import Emanima.Route
 import Emanima.View qualified as View
 import Emanote ()
 import Emanote qualified as Em
 import Emanote.CLI qualified as Em
+import Emanote.Model.Type qualified as Em
 import Emanote.Route.SiteRoute.Type qualified as Em
 import Optics.Core ((%))
 
@@ -22,7 +25,12 @@ instance EmaSite Route where
   siteInput cliAct emanoteConfig = do
     staticRouteDyn <- siteInput @StaticRoute cliAct ()
     notesDyn <- siteInput @Em.SiteRoute cliAct emanoteConfig
-    pure $ Model <$> staticRouteDyn <*> notesDyn
+    pure $
+      (\sr notes -> Model sr notes (mkMoodDeltas notes))
+        <$> staticRouteDyn <*> notesDyn
+    where
+      mkMoodDeltas notes =
+        M.parseMoodDeltas $ Ix.toList $ Em._modelNotes notes
   siteOutput rp m = \case
     Route_Html HtmlRoute_Index ->
       Ema.AssetGenerated Ema.Html $ View.renderDashboard rp m
